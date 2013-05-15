@@ -10,8 +10,8 @@
 native strcpy(dest[], const source[], maxlength=sizeof dest) = strcopy;
 
 // Define 8 Directions
-enum _Directions{
-  north,
+const ClassicDirections:{
+  north = 0,
   east,
   south,
   west,
@@ -159,8 +159,15 @@ stock GetPauseLevel() {
   return 1;
 }
 
+
+stock hasFirstRun = 0;
 stock FirstRun() {
-  return 1;
+	if ( hasFirstRun )
+	{
+		hasFirstRun = 0;
+		return 1;
+	}
+	return 0;
 }
 
 stock InitialPlayerX() {
@@ -384,8 +391,8 @@ stock CheckMask(x, y, checkForObjects = 0) {
 
 stock GetTimeDelta()
 {
-	new q = GameFrame();
-	return float(q)/1000;
+	new q = GameFrame2();
+	return q;
 }
 
 

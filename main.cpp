@@ -1,10 +1,10 @@
 /***********************************************
- * Copyright © Luke Salisbury
+ * Copyright Â© Luke Salisbury
  *
  * You are free to share, to copy, distribute and transmit this work
  * You are free to adapt this work
  * Under the following conditions:
- *  You must attribute the work in the manner specified by the author or licensor (but not in any way that suggests that they endorse you or your use of the work). 
+ *  You must attribute the work in the manner specified by the author or licensor (but not in any way that suggests that they endorse you or your use of the work).
  *  You may not use this work for commercial purposes.
  * Full terms of use: http://creativecommons.org/licenses/by-nc/3.0/
  * Changes:
@@ -86,24 +86,24 @@ void path_create(std::string folder)
 
 size_t file_write( std::string filename, char * contents, size_t length )
 {
-    size_t n_written = 0;
+	size_t n_written = 0;
 	FILE * file = fopen( filename.c_str(), "wb" );
 	if ( file )
 	{
 		n_written = fwrite( contents, 1, length, file);
-    }
+	}
 	fclose( file );
 	return n_written;
 }
 
 size_t file_append( std::string filename, char * contents, size_t length )
 {
-    size_t n_written = 0;
+	size_t n_written = 0;
 	FILE * file = fopen( filename.c_str(), "ab" );
 	if ( file )
 	{
 		n_written = fwrite( contents, 1, length, file);
-    }
+	}
 	fclose( file );
 	return n_written;
 }
@@ -112,64 +112,89 @@ std::string GetNameFromPath( std::string path )
 	return elix::path::GetName(path);
 }
 
+
+#ifdef __GNUWIN32__
 std::string file_open()
 {
-    std::string path;
-    char szFileName[MAX_PATH] = "";
-    
-    OPENFILENAME ofn;
-    ZeroMemory(&ofn, sizeof(ofn));
+	std::string path;
+	char szFileName[MAX_PATH] = "";
 
-    ofn.lStructSize = sizeof(ofn); // SEE NOTE BELOW
-    ofn.hwndOwner = NULL;
-    ofn.lpstrFilter = "Open Zelda Quest\0*.qss\0";
-    ofn.lpstrFile = szFileName;
-    ofn.nMaxFile = MAX_PATH;
-    ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
-    ofn.lpstrDefExt = "qss";
+	OPENFILENAME ofn;
+	ZeroMemory(&ofn, sizeof(ofn));
 
-    if ( GetOpenFileName(&ofn) )
-    {
-    	path = szFileName;
-    }
-    return path;
+	ofn.lStructSize = sizeof(ofn); // SEE NOTE BELOW
+	ofn.hwndOwner = NULL;
+	ofn.lpstrFilter = "Classic Open Zelda Quest\0*.qss\0";
+	ofn.lpstrFile = szFileName;
+	ofn.nMaxFile = MAX_PATH;
+	ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+	ofn.lpstrDefExt = "qss";
+
+	if ( GetOpenFileName(&ofn) )
+	{
+		path = szFileName;
+	}
+	return path;
 }
 
 std::string path_save()
 {
-    std::string path;
-    char szFileName[MAX_PATH] = "";
-    
-    BROWSEINFO bi = { 0 };
-    bi.lpszTitle = "Pick a Directory to Save to";
-    bi.ulFlags = BIF_USENEWUI | BIF_EDITBOX;
-    LPITEMIDLIST pidl = SHBrowseForFolder( &bi );
-    if ( pidl != 0 )
-    {
-        if ( SHGetPathFromIDList(pidl,szFileName) )
+	std::string path;
+	char szFileName[MAX_PATH] = "";
+
+	BROWSEINFO bi = { 0 };
+	bi.lpszTitle = "Pick a Directory to Save to";
+	bi.ulFlags = BIF_USENEWUI | BIF_EDITBOX;
+	LPITEMIDLIST pidl = SHBrowseForFolder( &bi );
+	if ( pidl != 0 )
+	{
+		if ( SHGetPathFromIDList(pidl,szFileName) )
 			path = szFileName;
-    }
-    return path;
+	}
+	return path;
 }
 
+void Message( std::string title, std::string message )
+{
+	MessageBox(NULL, message.c_str(), title.c_str(), MB_OK|MB_ICONINFORMATION|MB_TOPMOST );
+}
+
+#else
+std::string file_open()
+{
+	return "";
+}
+
+
+std::string path_save()
+{
+	return "";
+}
+
+void Message( std::string title, std::string message )
+{
+	std::cout << message << std::endl;
+}
+
+#endif
 
 
 int main (int argc, char *argv[])
 {
-	
+
 	std::cout << "oz2other - Convert Open Zelda Classic Quest to another format" << std::endl;
 	std::cout << "Supported Formats" << std::endl;
-	std::cout << "\tMokoi Game (include Open Legends of Zelda)" << std::endl;
+	std::cout << "\tMokoi Game (include Modern Open Zelda)" << std::endl;
 	std::cout << "\t" << std::endl;
-	
+
 	root = elix::path::GetBase(argv[0], true);
-	
+
 	std::string path = file_open();
 	if ( path.length() )
 	{
-    	
+
 		oz::load( elix::path::GetBase(elix::path::GetBase(path, false), true), elix::path::GetName(path) );
-		
+
 		std::string output_path;
 		output_path = path_save();
 		//output_path = "C:\\Users\\luke\\alchera\\TheJourneyBegins";
@@ -177,9 +202,10 @@ int main (int argc, char *argv[])
 		{
 			elix::string::Replace( output_path, "\\", "/" );
 			mokoi::save ( output_path, oz::name );
+			Message("ozc2other - Convert Open Zelda Classic Quest to another format","Your Open Zelda Classic Quest has been converted\nPlease note that Screen/Group scripts and images files have to be converted manually." );
 		}
 	}
-	MessageBox(NULL, "Your Open Zelda Classic Quest has been converted\nPlease note that Screen/Group scripts and images files have to be converted manually.", "oz2other - Convert Open Zelda Classic Quest to another format", MB_OK|MB_ICONINFORMATION|MB_TOPMOST );
+
 	return 0;
 }
 /*
@@ -218,7 +244,7 @@ void MGM_Game_Convert(char * file)
 		printf("	missing.\n");
 		quiting();
 	}
-	
+
 }
 
 void MGM_OldGame_ScanSprites()
@@ -232,7 +258,7 @@ void MGM_OldGame_ScanSprites()
 		printf("error message: %s\n", MGM_Game_Error->message);
 	}
 	g_clear_error(&MGM_Game_Error);
-	
+
 	while (current_file != NULL)
 	{
 		if (g_str_has_suffix(current_file, ".spt"))
@@ -263,7 +289,7 @@ void MGM_OldGame_ConvertSpt(std::string file)
 
 	std::ifstream sptfile(MGM_OldGame_SpriteFile.c_str());
 	std::ofstream outfile(MGM_NewGame_SpriteFile.c_str());
-	
+
 	std::string buffer;
 	int fill_line_count = 0;
 	float anim_count = 0.0f;
@@ -272,7 +298,7 @@ void MGM_OldGame_ConvertSpt(std::string file)
 
 	std::string name;
 	std::string mask;
-	
+
 	int position[4];
 	char flag = 0;
 	std::stringstream anim_buffer;
@@ -365,7 +391,7 @@ void MGM_OldGame_ConvertSpt(std::string file)
 					{
 						MGM_Sprite_OnTop[name] = true;
 					}
-					
+
 					fill_line_count++;
 				}
 				else if ( fill_line_count == 6)
@@ -377,7 +403,7 @@ void MGM_OldGame_ConvertSpt(std::string file)
 				{
 					if (buffer == "[EE]")
 					{
-						
+
 						outfile << name << "\t" << position[0] << "\t" << position[1] << "\t" << position[2] << "\t" << position[3]  << "\t" << (flag + 0) << "\t" << mask << "\n";
 						fill_line_count = 0;
 						flag = 0;
@@ -393,7 +419,7 @@ void MGM_OldGame_ConvertSpt(std::string file)
 				{
 					anim_frame_count = 0;
 					anim_frames = atoi(buffer.c_str());
-					
+
 					fill_line_count++;
 				}
 				else if ( fill_line_count == 1)
@@ -422,7 +448,7 @@ void MGM_OldGame_ConvertSpt(std::string file)
 					anim_frame_count++;
 					printf("animation frame\n");
 					outfile << name << "_f" << anim_frame_count << "\t" << position[0] << "\t" << position[1] << "\t" << position[2] << "\t" << position[3]  << "\t" << (0) << "\t0\n";
-					
+
 					if (anim_frame_count != anim_frames)
 					{
 						fill_line_count = 2;
@@ -489,7 +515,7 @@ void MGM_OldGame_ConvertLnd(std::ofstream * file, int x, int y, int offset_x, in
 	std::string file_name = name_stream.str();
 
 	std::string buffer;
-	
+
 	std::ifstream lndfile(file_name.c_str());
 	int sprite_count = 0;
 	int fill_count = 0;
@@ -501,7 +527,7 @@ void MGM_OldGame_ConvertLnd(std::ofstream * file, int x, int y, int offset_x, in
 	std::stringstream fill_buffer;
 	std::string sprite_name;
 	int position[4];
-	
+
 	do
 	{
 		std::getline (lndfile, buffer);
@@ -600,7 +626,7 @@ void MGM_OldGame_ConvertGroup(std::string name, int group[4], std::string music)
 {
 	//questdata\TheJourneyBegins\screens\0-0.lnd
 	//TheJourneyBegins\maps
-	
+
 	std::string world_filename = MGM_Game_Path + "/world.txt";
 	std::ofstream world;
 	world.open(world_filename.c_str(), std::ios::app);
@@ -609,7 +635,7 @@ void MGM_OldGame_ConvertGroup(std::string name, int group[4], std::string music)
 		world << name << "\t" << group[0] << "\t" << group[1] << "\t" << group[2] << "\t" << group[3] << "\n";
 	}
 	world.close();
-	
+
 	std::string map_filename = MGM_Game_Path + "/maps/" + name + ".xml";
 	std::ofstream map;
 	map.open(map_filename.c_str());
@@ -650,11 +676,11 @@ void MGM_OldGame_ScanQss()
 	int group_line_count = 0;
 	int game_setting_count = 0;
 	int mode = 0;
-	
+
 	int group[4];
 	std::string current_group;
 	int temp_convert;
-	
+
 	std::string config_filename = MGM_Game_Path + "/game.mokoi";
 	std::ofstream config;
 	config.open(config_filename.c_str());
@@ -779,7 +805,7 @@ void MGM_OldGame_ScanQss()
 	config << "map.width" << "\t=\t640\n";
 	config << "map.height" << "\t=\t480\n";
 	config.close();
-	
+
 	std::string old_script = "questdata\\" + MGM_OldGame_Name + "\\scripts\\main\\main.zes";
 	std::string new_script = MGM_Game_Path + "/scripts/main.mps";
 	printf("Moving Script %s to %s (%s)\n", old_script.c_str(), new_script.c_str(), (copy_file(old_script, new_script) == 0 ? "success" : "falid"));
@@ -950,7 +976,7 @@ void MGM_OldGame_ScanAudio()
 		printf("error message: %s\n", MGM_Game_Error->message);
 	}
 	g_clear_error(&MGM_Game_Error);
-	
+
 	std::ofstream audio_file;
 	audio_file.open (MGM_NewGame_SoundsFile.c_str(), std::fstream::out);
 	while (current_file != NULL)

@@ -5,6 +5,7 @@
 
 namespace elix {
 	namespace string {
+		bool RemovePrefix( std::string & str, std::string find, std::string::size_type max_depth  );
 		void Replace( std::string & str, std::string find, std::string replace );
 		void Split( std::string str, std::string delim, std::list<std::string> * results );
 		void Trim( std::string * source );

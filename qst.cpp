@@ -1,10 +1,10 @@
 /***********************************************
- * Copyright © Luke Salisbury
+ * Copyright Â© Luke Salisbury
  *
  * You are free to share, to copy, distribute and transmit this work
  * You are free to adapt this work
  * Under the following conditions:
- *  You must attribute the work in the manner specified by the author or licensor (but not in any way that suggests that they endorse you or your use of the work). 
+ *  You must attribute the work in the manner specified by the author or licensor (but not in any way that suggests that they endorse you or your use of the work).
  *  You may not use this work for commercial purposes.
  * Full terms of use: http://creativecommons.org/licenses/by-nc/3.0/
  * Changes:
@@ -26,7 +26,7 @@ enum {
 	SPT_INTRO,
 	SPT_TYPE,
 	SPT_INFO,
-	SPT_ANIMATEDINFO,
+	SPT_ANIMATEDINFO
 };
 
 enum {
@@ -34,7 +34,7 @@ enum {
 	LND_SPRITE,
 	LND_TILECOUNT,
 	LND_TILE,
-	LND_EXIT,
+	LND_EXIT
 };
 
 namespace oz
@@ -63,14 +63,14 @@ namespace oz
 		sprite s;
 		if ( name.length() )
 		{
-    		sprite_match_name = name;
-    		std::list<sprite>::iterator iter;
-    		iter = std::find_if( oz::sprites.begin(), oz::sprites.end(), sprite_match );
-    		if( iter != oz::sprites.end() )
+			sprite_match_name = name;
+			std::list<sprite>::iterator iter;
+			iter = std::find_if( oz::sprites.begin(), oz::sprites.end(), sprite_match );
+			if( iter != oz::sprites.end() )
 			{
-    			s = *iter;
+				s = *iter;
 			}
-  		}
+		}
 		return s;
 	}
 
@@ -84,7 +84,7 @@ namespace oz
 		uint32_t screen_count = 0;
 		uint32_t group_count = 0;
 		uint32_t mode = 0;
-		
+
 		rectangle group;
 		std::string current_group;
 		uint32_t temp_convert;
@@ -205,7 +205,7 @@ namespace oz
 	void ParseSPT( std::string file )
 	{
 		std::ifstream sptfile(file.c_str());
-		
+
 		uint32_t line_count = 0;
 		uint32_t anim_frames, anim_frame_count = 0;
 		uint32_t mode = SPT_INTRO;
@@ -233,7 +233,7 @@ namespace oz
 					else
 					{
 						s.name = buffer;
-						
+
 						s.parent = elix::path::GetName(file);
 						s.parent = s.parent.substr( 0, s.parent.find_last_of( '.', s.parent.length() ) );
 						mode = SPT_INFO;
@@ -243,7 +243,7 @@ namespace oz
 					qq = atoi(buffer.c_str());
 					if (qq == 10 )
 						std::cout << "Error:" <<__LINE__ << std::endl;
-					
+
 					if (buffer == "ANIMATED")
 					{
 						line_count = 0;
@@ -295,6 +295,7 @@ namespace oz
 					{
 						if (buffer == "[EE]")
 						{
+							s.timer = 0.0;
 							oz::sprites.push_back(s);
 							line_count = 0;
 							s.flag = 0;
@@ -378,11 +379,11 @@ namespace oz
 							}
 							outfile << (0) << "\t0\n";
 							*/
-    						s.parent = elix::path::GetName(file);
-    						s.parent = s.parent.substr( 0, s.parent.find_last_of( '.', s.parent.length() ) );
-    						oz::sprites.push_back(s);
-							
-		
+							s.parent = elix::path::GetName(file);
+							s.parent = s.parent.substr( 0, s.parent.find_last_of( '.', s.parent.length() ) );
+							oz::sprites.push_back(s);
+
+
 							anim_frames = 0;
 							line_count = 0;
 							s.flag = 0;
@@ -408,7 +409,7 @@ namespace oz
 			{
 				std::string file(*it);
 				oz::ParseSPT(file);
-			} 
+			}
 		}
 		std::cout << "oz::scanSprites: " << oz::sprites.size() << std::endl;
 		//for ( std::list<sprite>::iterator q = oz::sprites.begin(); q != oz::sprites.end(); q++)
@@ -464,14 +465,22 @@ namespace oz
 						sprite s = oz::find_sprite(obj.name);
 						if ( s.name.length() )
 						{
-							obj.name = s.parent + ".png:" + s.name; //note: hack for mokoi games
+							obj._sprite = s.name;
+							obj._sheet = s.parent + ".png";
 							if ( s.flag >= 2 )
 								obj.rect.z = 5;
 							if ( s.flag == 1 || s.flag == 3 )
 								obj.entity = s.name;
 							obj.rect.w = s.rect.w;
 							obj.rect.h = s.rect.h;
-      					}
+						}
+						else
+						{
+							obj._sprite = obj.name;
+							obj._sheet = "unknown.png";
+							obj.rect.w = 0;
+							obj.rect.h = 0;
+						}
 
 						objects.push_back(obj);
 						sprite_count--;
@@ -513,14 +522,22 @@ namespace oz
 						sprite s = oz::find_sprite(obj.name);
 						if ( s.name.length() )
 						{
-							obj.name = s.parent + ".png:" + s.name; //note: hack for mokoi games
+							obj._sprite = s.name;
+							obj._sheet = s.parent + ".png";
 							if ( s.flag >= 2 )
 								obj.rect.z = 5;
 							if ( s.flag == 1 || s.flag == 3 )
 								obj.entity = s.name;
-      					}
-                        
-                        objects.push_back(obj);
+						}
+						else
+						{
+							obj._sprite = obj.name;
+							obj._sheet = "unknown.png";
+							obj.rect.w = 0;
+							obj.rect.h = 0;
+						}
+
+						objects.push_back(obj);
 						fill_count--;
 						line_count = 0;
 						if (!fill_count)
@@ -546,7 +563,7 @@ namespace oz
 			return false;
 		objects.clear();
 
-		
+
 		rectangle group = *oz::maps_iter;
 		//std::cout << "oz::mapDetails: " << group.x << "x" << group.x << " " << group.w<< "x" << group.h << std::endl;
 		for( uint8_t _x = 0; _x < group.w; _x++)
@@ -574,9 +591,9 @@ namespace oz
 		return true;
 	}
 
-	/* Little Endian  AABBGGRR*/ 
+	/* Little Endian  AABBGGRR*/
 	#define RGBA32(r, g, b, a) ( (r) | (a << 24) | ((b)<<16)|((g)<<8) )
-	
+
 	uint32_t getPixel( uint8_t * pixels, int32_t p )
 	{
 		uint8_t * pix = pixels;
@@ -590,18 +607,18 @@ namespace oz
 		name_stream << oz::path << "sprite sheets/" << name;
 		stbi_convert_iphone_png_to_rgb(0);
 		uint8_t * pixels = stbi_load(name_stream.str().c_str(), &width, &height, NULL, 4);
-        if ( pixels == NULL )
-        {
-        	pixels = loadRLEBMP(name_stream.str().c_str(), width, height);
-        }
-        
-        if ( pixels == NULL )
-        {
+		if ( pixels == NULL )
+		{
+			pixels = loadRLEBMP(name_stream.str().c_str(), width, height);
+		}
+
+		if ( pixels == NULL )
+		{
 			std::cout << "oz::getImage" <<  "No Image Loaded" << std::endl;
 			return NULL;
 		}
-        if ( width > 0 && height > 0)
-        {
+		if ( width > 0 && height > 0)
+		{
 			int32_t c = 0;
 			int32_t q = 0;
 			int32_t size = width * height;
@@ -610,14 +627,14 @@ namespace oz
 			while ( c < size )
 			{
 				uint32_t pix = getPixel(pixels, c);
-				if ( pix == 0xFF00FF00 ) /* Little Endian  AABBGGRR*/ 
+				if ( pix == 0xFF00FF00 ) /* Little Endian  AABBGGRR*/
 				{
 					pix = 0x00000000;
 				}
 				dpixels[q++] = pix;
 				dpixels[q++] = pix;
-				
-				
+
+
 				c++;
 				if ( !(c % width) )
 				{
@@ -631,19 +648,19 @@ namespace oz
 		}
 		else
 		{
-        	return NULL;
+			return NULL;
 		}
-	
+
 	}
-	
+
 	static std::list<char *> entities_list;
 	std::list<char *>::iterator entities_it;
 	bool hasEntities()
 	{
-		
+
 		elix::path::Children( oz::path, "entities/", &entities_list, false, true, false );
 		entities_it = entities_list.begin();
-		
+
 		return !entities_list.empty();
 
 	}
@@ -661,9 +678,9 @@ namespace oz
 			return false;
 		}
 	}
-		
-		
-	
+
+
+
 }
 
 

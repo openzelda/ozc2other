@@ -7,92 +7,97 @@
 
 
 // Define General Entity Types
-enum _Types{
-otherType, // Other
-playerType, // Main Player
-enemyType, // Enemy
-npcType, // NPC
-weaponType, // Weapon
-itemType, // Item
-doorType, // Door
-switchType, // Switch
-blockType
+const Classic_Types:{
+	otherType = 0, // Other
+	playerType, // Main Player
+	enemyType, // Enemy
+	npcType, // NPC
+	weaponType, // Weapon
+	itemType, // Item
+	doorType, // Door
+	switchType, // Switch
+	blockType,
+	TypeCount
 }
 
 
 // Define a set of states which an entity can be in
-enum _States{
-standing,
-walking,
-hit,
-knocked,
-jumping,
-floating,
-swimming,
-chasing,
-using,
-lifting,
-standLift,
-walkLift,
-dying,
-dead,
-falling,
-falling2,
-stunned,
-frozen,
-shocked,
-burning,
-sleeping,
-waiting,
-leaping,
-pushing,
-pulling
+const Classic_States:{
+	standing = 0,
+	walking,
+	hit,
+	knocked,
+	jumping,
+	floating,
+	swimming,
+	chasing,
+	using,
+	lifting,
+	standLift,
+	walkLift,
+	dying,
+	dead,
+	falling,
+	falling2,
+	stunned,
+	frozen,
+	shocked,
+	burning,
+	sleeping,
+	waiting,
+	leaping,
+	pushing,
+	pulling,
+	StatesCount
 }
 
 
 // Entity Flag functions
-enum _Flags{
-_Open,
-_Taken,
-_Dead,
-_Visible,
-_Active,
-_Cuttable,
-_Large,
-_Pickable,
-_Pushed,
-_Interacting,
-_Owned
+const Classic_Flags:{
+	_Open = 0,
+	_Taken,
+	_Dead,
+	_Visible,
+	_Active,
+	_Cuttable,
+	_Large,
+	_Pickable,
+	_Pushed,
+	_Interacting,
+	_Owned,
+	FlagsCount
 }
 
-stock __flags[_Flags];
+stock __flags[FlagsCount];
 
-forward public GetSelfFlag(_Flags:flag);
-public GetSelfFlag(_Flags:flag) 
-{
-return __flags[flag];
-}
-
+forward public GetSelfFlag(Classic_Flags:flag);
 forward public SetSelfFlag(flag, val);
+
+public GetSelfFlag(Classic_Flags:flag) 
+{
+	return __flags[flag];
+}
+
+
 public SetSelfFlag(flag, val)
 {
-__flags[flag] = val;
+	__flags[flag] = val;
 }
 
-stock GetFlag(ident[], _Flags:flag)
+stock GetFlag(ident[], Classic_Flags:flag)
 {
-if ( !strcmp(ident, "this") )
-return __flags[flag];
-else
-return EntityPublicFunction(ident, "GetSelfFlag", "n", flag);
+	if ( !strcmp(ident, "this") )
+		return __flags[flag];
+	else
+		return EntityPublicFunction(EntityHash(ident), "GetSelfFlag", ''n'', flag);
 }
 
 stock SetFlag(ident[], flag, val)
 {
-if ( !strcmp(ident, "this") )
-__flags[flag] = val;
-else
-EntityPublicFunction(ident, "SetSelfFlag", "nn", flag, val);
+	if ( !strcmp(ident, "this") )
+		__flags[flag] = val;
+	else
+		EntityPublicFunction(EntityHash(ident), "SetSelfFlag", ''nn'', flag, val);
 }
 
 stock isOpen(ident[] = "this") { return GetFlag(ident, _Open); }
@@ -283,7 +288,7 @@ return 1;
 }
 
 stock GetState(ident[] = "this") {
-return standing;
+	return _:standing;
 }
 
 stock GetInitialX(ident[] = "this") {

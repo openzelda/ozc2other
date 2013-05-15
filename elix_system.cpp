@@ -16,6 +16,21 @@
 
 namespace elix {
 	namespace string {
+		bool RemovePrefix( std::string & str, std::string find, std::string::size_type max_remove  )
+		{
+			std::string::size_type found = str.find(find, 0);
+
+			if ( found < max_remove )
+			{
+				if ( found == 0 )
+				{
+					max_remove = 1;
+				}
+				str.erase(0, find.size() >= max_remove ? find.size() : max_remove );
+				return true;
+			}
+			return false;
+		}
 		void Replace( std::string & str, std::string find, std::string replace )
 		{
 			std::string::size_type look = 0;
@@ -143,7 +158,7 @@ namespace elix {
 				if ( !Valid( full_directory ) )
 				{
 					#ifdef __GNUWIN32__
-						_mkdir(full_directory.c_str());
+						mkdir(full_directory.c_str());
 					#else
 						mkdir(full_directory.c_str(), 0744);
 					#endif
@@ -159,7 +174,7 @@ namespace elix {
 				if ( !Valid( full_directory ) )
 				{
 				#ifdef __GNUWIN32__
-					_mkdir(full_directory.c_str());
+					mkdir(full_directory.c_str());
 				#else
 					mkdir(full_directory.c_str(), 0744);
 				#endif
@@ -213,7 +228,7 @@ namespace elix {
 
 			std::string full_directory = User("") + path + ELIX_DIR_SSEPARATOR;
 			#ifdef __GNUWIN32__
-				_mkdir(full_directory.c_str());
+				mkdir(full_directory.c_str());
 			#else
 				mkdir(full_directory.c_str(), 0744);
 			#endif
@@ -232,7 +247,7 @@ namespace elix {
 				std::cerr << __FUNCTION__ << " Can't open '" << dir_path << "'." << std::endl;
 				return false;
 			}
-			
+
 			while ( (entry = readdir(dir)) != NULL )
 			{
 				if ( (strcmp(entry->d_name, ".") != 0) && (strcmp(entry->d_name, "..") != 0) )
