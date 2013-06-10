@@ -2,26 +2,33 @@
 BUILDPLATFORM = ${shell uname}
 
 
-
 # Windows
 CPP      = g++.exe
 CC       = gcc.exe
+RM       = rm -f
 WINDRES  = windres.exe
+
+BIN      = ozc2other.exe
+
 LIBS     = -static-libgcc -Wl,--enable-auto-import -lcomdlg32 -lrpcrt4  -s  -m32
 INCS     =
 CXXINCS  =
-BIN      = ozc2other.exe
 CXXFLAGS = -D__GNUWIN32__ -DWIN32 -D_WINDOWS $(CXXINCS) -m32 -std=c++11 -Wno-write-strings
 CFLAGS   = -D__GNUWIN32__ -DWIN32 -D_WINDOWS $(INCS) -m32 -std=c99
-RM       = rm -f
-
 
 ifeq ($(BUILDPLATFORM), Darwin)
 
 endif
 
 ifeq ($(BUILDPLATFORM), Linux)
+	LIBS     = -static-libgcc -luuid
+	INCS     =
+	CXXINCS  =
+	CXXFLAGS = -std=c++11 -Wno-write-strings
+	CFLAGS   =  $(INCS) -std=c99
 
+	CPP = g++
+	CC  = gcc
 endif
 
 
@@ -32,7 +39,8 @@ LINKOBJ = $(OBJ) $(RES)
 
 .PHONY: all all-before all-after clean clean-custom
 
-all: all-before $(BIN) all-after
+all: $(BIN)
+	@echo -----------------------
 
 
 clean: clean-custom
@@ -48,5 +56,6 @@ $(BIN): $(OBJ)
 
 %.o : %.c
 	@echo Compiling $<
-	@$(CC) -c $(CFLAGS) -o $@ $<
+	@$(CC) -c $(CFLAGS) -o $@ -c $<
+
 

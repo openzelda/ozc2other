@@ -16,6 +16,9 @@
 #if __GNUWIN32__
 #include <Windows.h>
 #include <Rpc.h>
+#else
+#include <uuid/uuid.h>
+
 #endif
 
 #include <sstream>
@@ -176,17 +179,11 @@ namespace mokoi
 		config.append("project.title=" + mokoi::name + "\n");
 
 		/* User Name */
-		uint32_t len = 42;
-		char buffer[43];
+		config.append("project.author=");
+		config.append( get_username() );
+		config.append("\n");
 
-		if ( GetUserName(buffer, (LPDWORD)&len) )
-		{
-			config.append("project.author=");
-			config.append(buffer);
-			config.append("\n");
-		}
-		else
-			config.append("project.author=Unknown\n");
+
 
 		time_t now = time(NULL);
 
@@ -194,12 +191,26 @@ namespace mokoi
 		append_number(config, now);
 		config.append("\n");
 
+#ifdef WIN32
 		UUID Uuid;
 		UuidCreate( &Uuid );
 
 		config.append("project.id=");
 		append_number(config, Uuid.Data1);
 		config.append("\n");
+#else
+		char * uuid_text = new char[36];
+		uuid_t Uuid;
+		uuid_generate(Uuid);
+
+		uuid_unparse(Uuid, uuid_text);
+		config.append("project.id=");
+		config.append( uuid_text );
+		config.append("\n");
+
+		delete [] uuid_text;
+#endif
+
 
 		config.append("map.width=640\n");
 		config.append("map.height=480\n");

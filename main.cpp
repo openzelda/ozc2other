@@ -11,9 +11,18 @@
  *	 2010/12/11 [luke]: new file.
  ***********************************************/
 #include "header.hpp"
+
+#ifdef WIN32
 #include <windows.h>
 #include <Shlobj.h>
 #include <io.h>
+#else
+#include <sys/stat.h>
+
+#endif
+
+
+
 #include "elix_path.h"
 #include "elix_string.h"
 
@@ -81,7 +90,7 @@ bool str_has_suffix(const char *str, const char *suffix)
 
 void path_create(std::string folder)
 {
-	mkdir( folder.c_str() );
+	mkdir( folder.c_str(), 0755 );
 }
 
 size_t file_write( std::string filename, char * contents, size_t length )
@@ -159,16 +168,51 @@ void Message( std::string title, std::string message )
 	MessageBox(NULL, message.c_str(), title.c_str(), MB_OK|MB_ICONINFORMATION|MB_TOPMOST );
 }
 
-#else
-std::string file_open()
+std::string get_username()
 {
-	return "";
+	std::string name;
+	uint32_t len = 42;
+	char buffer[43];
+
+	if ( GetUserName(buffer, (LPDWORD)&len) )
+	{
+		name.append(buffer);
+	}
+	else
+	{
+		name.assign("Unknown");
+	}
 }
 
 
-std::string path_save()
+#else
+
+std::string get_username()
 {
-	return "";
+	return "Unknown";
+}
+
+std::string file_open( char * requested )
+{
+	if ( requested )
+		return requested;
+	else
+	{
+		std::cout << "No source given. " << std::endl;
+		return "";
+	}
+}
+
+
+std::string path_save( char * requested )
+{
+	if ( requested )
+		return requested;
+	else
+	{
+		std::cout << "No output directory set." << std::endl;
+		return "";
+	}
 }
 
 void Message( std::string title, std::string message )
@@ -189,14 +233,18 @@ int main (int argc, char *argv[])
 
 	root = elix::path::GetBase(argv[0], true);
 
-	std::string path = file_open();
+
+
+	std::string path = file_open( argc > 1 ? argv[1] : NULL );
+
+
 	if ( path.length() )
 	{
 
 		oz::load( elix::path::GetBase(elix::path::GetBase(path, false), true), elix::path::GetName(path) );
 
 		std::string output_path;
-		output_path = path_save();
+		output_path = path_save( argc > 2 ? argv[2] : NULL );
 		//output_path = "C:\\Users\\luke\\alchera\\TheJourneyBegins";
 		if ( !output_path.empty() )
 		{

@@ -80,6 +80,8 @@ size_t file_write( std::string file, char * contents, size_t length );
 size_t file_append( std::string filename, char * contents, size_t length );
 uint8_t * loadRLEBMP( const char *file, int &w, int &h );
 std::string GetNameFromPath( std::string path );
+std::string get_username();
+
 
 extern std::string root;
 
