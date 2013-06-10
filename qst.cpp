@@ -345,7 +345,7 @@ namespace oz
 					}
 					else if ( line_count == 6)
 					{
-						s.mask = (buffer.length() ? buffer : "false");
+						s.mask = (buffer.length() ? buffer : "0");
 						line_count++;
 					}
 					else if ( line_count == 7)

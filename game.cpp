@@ -100,6 +100,8 @@ namespace mokoi
 		"_level9"
 		"_level8dun",
 		"_level8"
+		"level8_dun",
+		"level8_",
 		"level7_dun",
 		"level7_",
 		"_level6dun",
@@ -126,7 +128,7 @@ namespace mokoi
 
 		"_gdun",
 		"_building",
-
+		"icepalo_ice",
 		""
 	};
 
@@ -343,7 +345,27 @@ namespace mokoi
 				}
 				else
 				{
-					current_sheet->contents << "\t<sprite name=\"" << rename_sprite((*sprite_iter).name) << "\" mask=\"" << (*sprite_iter).mask << "\"" << ((*sprite_iter).flag == 1 ? "entity=\""+(*sprite_iter).name+"\"" : "") << ">" << std::endl;
+					std::string m = (*sprite_iter).mask;
+					if ( m == "0" )
+					{
+						m.clear();
+					}
+					else
+					{
+						int mask_w = 0, mask_h= 0, mask_value = 0;
+						if ( sscanf( m.c_str(), "%dx%dx%d", &mask_w, &mask_h, &mask_value ) == 3 )
+						{
+
+							m.clear();
+							append_number(m, 255 - mask_value);
+							std::cout << (*sprite_iter).mask << " > " << m << std::endl;
+						}
+					}
+
+
+
+
+					current_sheet->contents << "\t<sprite name=\"" << rename_sprite((*sprite_iter).name) << "\" mask=\"" << m << "\"" << ((*sprite_iter).flag == 1 ? "entity=\""+(*sprite_iter).name+"\"" : "") << ">" << std::endl;
 					current_sheet->contents << "\t\t<position x=\"" << (*sprite_iter).rect.x << "\" y=\"" << (*sprite_iter).rect.y << "\" w=\"" << (*sprite_iter).rect.w << "\" h=\"" << (*sprite_iter).rect.h << "\" />" << std::endl;
 					current_sheet->contents << "\t</sprite>" << std::endl;
 				}

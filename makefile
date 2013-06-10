@@ -10,11 +10,11 @@ WINDRES  = windres.exe
 
 BIN      = ozc2other.exe
 
-LIBS     = -static-libgcc -Wl,--enable-auto-import -lcomdlg32 -lrpcrt4  -s  -m32
+LIBS     = -static-libgcc -Wl,--enable-auto-import -lcomdlg32 -lrpcrt4 -g3  -m32
 INCS     =
 CXXINCS  =
-CXXFLAGS = -D__GNUWIN32__ -DWIN32 -D_WINDOWS $(CXXINCS) -m32 -std=c++11 -Wno-write-strings
-CFLAGS   = -D__GNUWIN32__ -DWIN32 -D_WINDOWS $(INCS) -m32 -std=c99
+CXXFLAGS = -D__GNUWIN32__ -DWIN32 -D_WINDOWS $(CXXINCS) -m32 -std=c++11 -Wno-write-strings -g3
+CFLAGS   = -D__GNUWIN32__ -DWIN32 -D_WINDOWS $(INCS) -m32 -std=c99 -g3
 
 ifeq ($(BUILDPLATFORM), Darwin)
 

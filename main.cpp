@@ -90,7 +90,11 @@ bool str_has_suffix(const char *str, const char *suffix)
 
 void path_create(std::string folder)
 {
+#ifdef WIN32
+	mkdir( folder.c_str() );
+#else
 	mkdir( folder.c_str(), 0755 );
+#endif
 }
 
 size_t file_write( std::string filename, char * contents, size_t length )
@@ -123,7 +127,7 @@ std::string GetNameFromPath( std::string path )
 
 
 #ifdef __GNUWIN32__
-std::string file_open()
+std::string file_open( char * requested )
 {
 	std::string path;
 	char szFileName[MAX_PATH] = "";
@@ -146,7 +150,7 @@ std::string file_open()
 	return path;
 }
 
-std::string path_save()
+std::string path_save( char * requested )
 {
 	std::string path;
 	char szFileName[MAX_PATH] = "";
@@ -182,6 +186,7 @@ std::string get_username()
 	{
 		name.assign("Unknown");
 	}
+	return name;
 }
 
 
@@ -223,8 +228,14 @@ void Message( std::string title, std::string message )
 #endif
 
 
+
+
 int main (int argc, char *argv[])
 {
+	std::string path;
+	std::string output_path;
+
+
 
 	std::cout << "oz2other - Convert Open Zelda Classic Quest to another format" << std::endl;
 	std::cout << "Supported Formats" << std::endl;
@@ -235,17 +246,18 @@ int main (int argc, char *argv[])
 
 
 
-	std::string path = file_open( argc > 1 ? argv[1] : NULL );
 
+	//path = file_open( argc > 1 ? argv[1] : NULL );
+	path = "C:\\Users\\luke\\qdtest\\save\\TheJourneyBegins.qss";
 
 	if ( path.length() )
 	{
 
 		oz::load( elix::path::GetBase(elix::path::GetBase(path, false), true), elix::path::GetName(path) );
 
-		std::string output_path;
-		output_path = path_save( argc > 2 ? argv[2] : NULL );
-		//output_path = "C:\\Users\\luke\\alchera\\TheJourneyBegins";
+
+		//output_path = path_save( argc > 2 ? argv[2] : NULL );
+		output_path = "C:\\Users\\luke\\openzelda-quests\\TheJourneyBegin";
 		if ( !output_path.empty() )
 		{
 			elix::string::Replace( output_path, "\\", "/" );
